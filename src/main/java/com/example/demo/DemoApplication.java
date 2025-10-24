@@ -17,8 +17,10 @@ public class DemoApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        //Con esto leemos los alumnos desde el CSV
         List<Alumno> alumnos = leerAlumnoDesdeCSV.leerAlumnos("alumnos.csv");
-
+        //Y aqui pues llamamos a la funcion pa escribir el JSON y el XML (Ademas si cambiamos el archivo alumnos.csv los sobreescribe)
         ConversorJSON.escribirJSON(alumnos, "alumnos.json");
+        ConversorXML.escribirXML(alumnos, "alumnos.xml");
     }
 }

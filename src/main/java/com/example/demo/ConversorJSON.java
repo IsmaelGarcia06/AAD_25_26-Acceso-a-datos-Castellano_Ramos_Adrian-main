@@ -11,6 +11,7 @@ import java.util.List;
 public class ConversorJSON {
 
     public static void escribirJSON(List<Alumno> alumnos, String rutaSalida) {
+        //Aqui podria comentar algo pero literal el mapper hace todo el trabajo tirando con la lectura del archivo leerAlumnoDesdeCSV
         ObjectMapper mapper = new ObjectMapper();
 
         try {

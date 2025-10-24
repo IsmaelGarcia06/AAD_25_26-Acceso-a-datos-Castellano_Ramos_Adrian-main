@@ -6,6 +6,9 @@ public class Alumno {
     private double nota;
 
     public Alumno(int id, String nombre, double nota) {
+        this.id = id;
+        this.nombre = nombre;
+        this.nota = nota;
     }
 
     public Alumno() {
@@ -17,6 +20,7 @@ public class Alumno {
     }
 
     public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -24,6 +28,7 @@ public class Alumno {
     }
 
     public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public double getNota() {
@@ -31,5 +36,6 @@ public class Alumno {
     }
 
     public void setNota(double nota) {
+        this.nota = nota;
     }
 }
