@@ -7,3 +7,15 @@ y enfoques en el contexto de bases de datos. El objetivo principal es proporcion
 interactuar con bases de datos relacionales y no relacionales, así como implementar operaciones CRUD (Crear, Leer,
 Actualizar, Eliminar).
 
+# funcionalidades
+
+- Añadir eventos a una base de datos.
+- Consultar eventos desde la base de datos.
+- Cambiar codificación.
+
+# conceptos clave
+
+- Escritura y lectura de ficheros.
+- Manejo de excepciones.
+- La estructura que pediste en clase. (aunque no se si esta bien)
+- Aplicacion de spring boot.
