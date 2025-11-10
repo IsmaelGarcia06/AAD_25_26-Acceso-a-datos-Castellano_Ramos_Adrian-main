@@ -1,27 +1,32 @@
 package com.example.demo;
 
+import com.example.demo.model.Student;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import java.io.File;
-import java.io.IOException;
+
 
 @SpringBootApplication
 @Slf4j
+@RequiredArgsConstructor
 public class DemoApplication implements CommandLineRunner {
 
+    private final StudentService studentService;
+
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
+        SpringApplication.run(com.example.demo.DemoApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        File fichero = new File("ejemplo.txt");
-        if (fichero.createNewFile()) {
-            log.info("Fichero creado: " + fichero.getName());
+        Student vito = new Student(1, "John", "asd@gmail.com");
+        Student create = studentService.createStudent(vito);
+        if (create != null) {
+            log.info("Create: {}", create);
         } else {
-            log.info("Fichero ya existe: " + fichero.getName());
+            log.error("Student not valid");
         }
     }
 }
