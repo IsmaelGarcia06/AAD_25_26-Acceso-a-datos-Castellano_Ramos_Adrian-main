@@ -155,9 +155,9 @@ public class StudentRepository implements CrudRepository<Student> {
 
     // Método para operación transaccional
     public void transactionalOperation(List<Student> students) {
-        Connection conn = null;
-        try {
-            conn = dataSource.getConnection();
+
+        try (Connection conn = dataSource.getConnection()) {
+
             conn.setAutoCommit(false);
 
             for (Student student : students) {
@@ -178,24 +178,7 @@ public class StudentRepository implements CrudRepository<Student> {
             log.info("Transaction completed successfully");
 
         } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                    log.info("Transaction rolled back due to error: {}", e.getMessage());
-                } catch (SQLException rollbackEx) {
-                    log.error("Error during rollback: {}", rollbackEx.getMessage());
-                }
-            }
-            throw new RuntimeException("Transaction failed: " + e.getMessage(), e);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException e) {
-                    log.error("Error closing connection: {}", e.getMessage());
-                }
-            }
+            log.error("Transaction failed, rolling back: {}", e.getMessage());
         }
     }
 
