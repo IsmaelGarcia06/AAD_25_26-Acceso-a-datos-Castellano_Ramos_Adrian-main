@@ -9,8 +9,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Modules {
-
+public class Module {
+    private Integer id;      // ⬅️ AÑADIR - se autogenera en BD
     private String code;
     private String name;
+    private Integer hours;   // ⬅️ AÑADIR - requerido por el PDF
 }

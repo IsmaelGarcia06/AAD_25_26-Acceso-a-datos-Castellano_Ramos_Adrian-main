@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.application.StudentManagementService;
 import com.example.demo.model.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +12,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @Slf4j
 @RequiredArgsConstructor
-public class DemoApplication implements CommandLineRunner {
+public class Application implements CommandLineRunner {
 
-    private final StudentService studentService;
+    private final StudentManagementService studentService;
 
     public static void main(String[] args) {
-        SpringApplication.run(com.example.demo.DemoApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Override

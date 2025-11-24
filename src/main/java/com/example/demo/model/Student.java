@@ -1,6 +1,5 @@
 package com.example.demo.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,14 +11,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Student extends Person {
+public class Student {
+    private Integer id;        // era 'dni'
+    private String nif;        // campo del PDF
+    private String name;
+    private String email;
+    private String curse;      // campo del PDF (curso: DAW, DAM, etc.)
+    private List<Module> modules;  // relación con módulos
 
-    private String curso;
-    private List<Modules> modules;
-
-
-    public Student(int dni, String name, String email) {
-        super(dni, name, email);
-    }
-
+    // Constructor vacío, constructor completo, getters y setters
 }

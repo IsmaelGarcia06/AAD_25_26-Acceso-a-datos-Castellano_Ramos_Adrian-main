@@ -1,5 +1,6 @@
-package com.example.demo;
+package com.example.demo.application;
 
+import com.example.demo.CustomService;
 import com.example.demo.model.Student;
 import com.example.demo.repository.ModuleRepository;
 import com.example.demo.repository.StudentRepository;
@@ -12,7 +13,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StudentService implements CustomService<Student> {
+public class StudentManagementService implements CustomService<Student> {
 
     private final StudentRepository StudentRepository;
     private final ModuleRepository moduleRepository;
