@@ -21,90 +21,162 @@ public class PostgresqlDriver {
     private final String username;
     private final String password;
     private final String driverClassName;
-    Connection connection;
-    @Value("classpath*:sql/*.sql")
+
+    private final ThreadLocal<Connection> transactionConnection = new ThreadLocal<>();
+
+    @Value("classpath*:sql/ddl/*.sql")
     private Resource[] scripts;
 
     public PostgresqlDriver(
             @Value("${spring.datasource.url}") String url,
             @Value("${spring.datasource.username}") String username,
             @Value("${spring.datasource.password}") String password,
-            @Value("${spring.datasource.driver-classname:org.postgresql.Driver}") String driverClassName) {
+            @Value("${spring.datasource.driver-class-name:org.postgresql.Driver}") String driverClassName) {
         this.url = url;
         this.username = username;
         this.password = password;
         this.driverClassName = driverClassName;
+
         try {
             Class.forName(this.driverClassName);
+            log.info("JDBC driver loaded: {}", this.driverClassName);
         } catch (ClassNotFoundException e) {
-            log.warn("JDBC driver not found: {}", this.driverClassName, e);
+            log.error("JDBC driver not found: {}", this.driverClassName, e);
+            throw new RuntimeException("Driver not found", e);
         }
     }
 
     public Connection getConnection() throws SQLException {
-        if (connection != null) return connection;
         return DriverManager.getConnection(url, username, password);
     }
 
+
     @PostConstruct
     public void init() {
-        log.info("🛠️ Initializing database...");
+        log.info("Initializing database from SQL scripts...");
+
+        if (scripts == null || scripts.length == 0) {
+            log.warn("No SQL scripts found in classpath:sql/ddl/");
+            return;
+        }
+
+        java.util.Arrays.sort(scripts, (r1, r2) -> {
+            try {
+                return r1.getFilename().compareTo(r2.getFilename());
+            } catch (Exception e) {
+                return 0;
+            }
+        });
+
         for (Resource script : scripts) {
             executeSql(script);
         }
-        log.info("✅ Database initialized successfully!");
+
+
+        System.out.println("Database initialized from SQL scripts");
+        log.info("Database initialized successfully!");
     }
+
 
     private void executeSql(Resource resource) {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
-             BufferedReader reader = new BufferedReader(new
-                     InputStreamReader(resource.getInputStream()))) {
-            String sql = reader.lines().collect(Collectors.joining("\n"));
-            stmt.execute(sql);
-            log.info("📄 Executed script: {}", resource.getFilename());
+             BufferedReader reader = new BufferedReader(
+                     new InputStreamReader(resource.getInputStream()))) {
+
+            String sql = reader.lines()
+                    .filter(line -> !line.trim().startsWith("--")) // Filtrar comentarios
+                    .collect(Collectors.joining("\n"));
+
+            if (!sql.trim().isEmpty()) {
+                stmt.execute(sql);
+                log.info("Executed script: {}", resource.getFilename());
+            }
+
         } catch (Exception e) {
-            log.error("⚠️ Error executing script {}: {}",
-                    resource.getFilename(), e.getMessage());
+            log.error("Error executing script {}: {}",
+                    resource.getFilename(), e.getMessage(), e);
         }
     }
 
-    public void beginTransaction() throws SQLException {
-        if (connection != null) throw new IllegalStateException("connection already active");
-        connection = DriverManager.getConnection(url, username, password);
-        connection.setAutoCommit(false);
+    public void beginTransaction() {
+        try {
+            Connection conn = transactionConnection.get();
+            if (conn != null && !conn.isClosed()) {
+                throw new IllegalStateException("Transaction already active in this thread");
+            }
+
+            conn = DriverManager.getConnection(url, username, password);
+            conn.setAutoCommit(false);
+            transactionConnection.set(conn);
+
+            log.debug("🔄 Transaction started");
+
+        } catch (SQLException e) {
+            log.error("❌ Error starting transaction", e);
+            throw new RuntimeException("Error starting transaction: " + e.getMessage(), e);
+        }
     }
 
+    public void commit() {
+        Connection conn = transactionConnection.get();
 
-    public void commit() throws SQLException {
-        if (connection == null) throw new IllegalStateException("No active connection");
+        if (conn == null) {
+            throw new IllegalStateException("No active transaction to commit");
+        }
+
         try {
-            connection.commit();
+            conn.commit();
+            log.debug("✅ Transaction committed");
+
+        } catch (SQLException e) {
+            log.error("❌ Error committing transaction", e);
+            throw new RuntimeException("Error committing transaction: " + e.getMessage(), e);
+
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                log.error("Close error: {}", e.getMessage());
-            }
-            connection = null;
+            closeTransactionConnection();
         }
     }
 
     public void rollback() {
-        if (connection == null) return;
+        Connection conn = transactionConnection.get();
+
+        if (conn == null) {
+            log.warn("⚠️ No active transaction to rollback");
+            return;
+        }
+
         try {
-            connection.rollback();
+            conn.rollback();
+            log.warn("🔙 Transaction rolled back");
+
         } catch (SQLException e) {
-            log.error("Rollback error: {}", e.getMessage());
+            log.error("❌ Error rolling back transaction", e);
+
         } finally {
+            closeTransactionConnection();
+        }
+    }
+
+
+    private void closeTransactionConnection() {
+        Connection conn = transactionConnection.get();
+
+        if (conn != null) {
             try {
-                connection.close();
+                if (!conn.isClosed()) {
+                    conn.close();
+                }
             } catch (SQLException e) {
-                log.error("Close error: {}", e.getMessage());
+                log.error("❌ Error closing transaction connection", e);
+            } finally {
+                transactionConnection.remove();
             }
         }
     }
 
+
+    public Connection getTransactionConnection() {
+        return transactionConnection.get();
+    }
 }
-
-

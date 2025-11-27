@@ -26,3 +26,42 @@ Luego, he intentado conectarme a la base de datos para verificar que la conexió
 operaciones básicas
 como crear tablas, insertar datos y realizar consultas.
 
+# Conclusión.
+
+En conclusión, los conectores son esenciales para facilitar la integración entre diferentes sistemas y aplicaciones,
+permitiendo un flujo de datos eficiente. Levantar un servicio PostgreSQL utilizando Docker es una forma rápida y
+sencilla
+de configurar una base de datos para pruebas y desarrollo. Al utilizar las variables de entorno adecuadas, se puede
+asegurar que el servicio esté correctamente configurado y listo para su uso. de datos y el puerto asignado.
+Estas variables son cruciales para establecer una conexión exitosa y segura con la base de datos.
+
+- POSTGRES_USER: Define el nombre de usuario para acceder a la base de datos.
+- POSTGRES_PASSWORD: Establece la contraseña para el usuario definido.
+- POSTGRES_DB: Especifica el nombre de la base de datos que se creará al iniciar el contenedor.
+- PORT: Define el puerto en el que el servicio PostgreSQL escuchará las conexiones entrantes.
+- HOST: Indica la dirección del host donde se está ejecutando el contenedor de PostgreSQL.
+
+# Ejemplo de comando Docker utilizado:
+
+```bash
+docker run --name mi_postgres -e POSTGRES_USER=mi_usuario -e POSTGRES_PASSWORD=mi_contraseña -e POSTGRES_DB=mi_base_de_datos -p 5432:5432 -d postgres
+```
+
+Este comando crea y ejecuta un contenedor de PostgreSQL con las variables de entorno especificadas
+y mapea el puerto 5432 del contenedor al puerto 5432 del host.
+
+# Ejemplo de comando para probar la conexión:
+
+```bash
+psql -h localhost -p 5432 -U mi_usuario -d mi_base_de_datos
+```
+
+Este comando intenta conectarse a la base de datos PostgreSQL utilizando las credenciales y la información
+proporcionadas.
+
+# Resultado esperado:
+
+Si la conexión es exitosa, se debería ver un mensaje de bienvenida de PostgreSQL y un prompt para ejecutar comandos SQL.
+
+
+

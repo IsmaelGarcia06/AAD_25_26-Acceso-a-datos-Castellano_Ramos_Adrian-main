@@ -58,12 +58,6 @@ public class ModuleRepository {
         this.dataSource = dataSource;
     }
 
-    /**
-     * Inserta un nuevo módulo (según Paso 7)
-     *
-     * @param module Módulo a insertar
-     * @return Módulo con ID generado
-     */
     public Module insert(Module module) {
         if (module == null) {
             throw new IllegalArgumentException("Module cannot be null");
@@ -92,11 +86,6 @@ public class ModuleRepository {
         return null;
     }
 
-    /**
-     * Obtiene todos los módulos (según Paso 7)
-     *
-     * @return Lista de todos los módulos
-     */
     public List<Module> findAll() {
         List<Module> modules = new ArrayList<>();
 
@@ -118,12 +107,6 @@ public class ModuleRepository {
         }
     }
 
-    /**
-     * Busca un módulo por ID (según Paso 7)
-     *
-     * @param id ID del módulo
-     * @return Módulo encontrado o null
-     */
     public Module findById(int id) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -147,12 +130,6 @@ public class ModuleRepository {
         }
     }
 
-    /**
-     * Busca un módulo por código (útil para verificar existencia)
-     *
-     * @param code Código del módulo
-     * @return Módulo encontrado o null
-     */
     public Module findByCode(String code) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_SELECT_BY_CODE)) {
@@ -176,12 +153,6 @@ public class ModuleRepository {
         }
     }
 
-    /**
-     * Actualiza un módulo existente (según Paso 7)
-     *
-     * @param module Módulo con datos actualizados
-     * @return Módulo actualizado
-     */
     public Module update(Module module) {
         if (module == null || module.getId() == null) {
             throw new IllegalArgumentException("Update requires a Module with valid ID");
@@ -211,12 +182,6 @@ public class ModuleRepository {
         }
     }
 
-    /**
-     * Elimina un módulo por ID (según Paso 7)
-     *
-     * @param id ID del módulo a eliminar
-     * @return true si se eliminó, false si no existía
-     */
     public boolean delete(int id) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
@@ -234,13 +199,6 @@ public class ModuleRepository {
         }
     }
 
-    /**
-     * Mapea un ResultSet a un objeto Module
-     *
-     * @param rs ResultSet con los datos
-     * @return Objeto Module
-     * @throws SQLException si hay error al leer datos
-     */
     private Module mapRow(ResultSet rs) throws SQLException {
         Module module = new Module();
         module.setId(rs.getInt("id_modulo"));
