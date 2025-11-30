@@ -1,6 +1,5 @@
 package com.example.demo.application;
 
-import com.example.demo.config.PostgresqlDriver;
 import com.example.demo.model.Enrollment;
 import com.example.demo.model.Module;
 import com.example.demo.model.Student;
