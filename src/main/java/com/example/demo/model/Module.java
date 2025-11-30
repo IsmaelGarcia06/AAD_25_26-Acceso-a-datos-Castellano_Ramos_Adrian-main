@@ -10,8 +10,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Module {
-    private Integer id;      // ⬅️ AÑADIR - se autogenera en BD
+    private Integer id;
     private String code;
     private String name;
-    private Integer hours;   // ⬅️ AÑADIR - requerido por el PDF
+    private Integer hours;
 }

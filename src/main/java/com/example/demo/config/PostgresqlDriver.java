@@ -110,10 +110,10 @@ public class PostgresqlDriver {
             conn.setAutoCommit(false);
             transactionConnection.set(conn);
 
-            log.debug("🔄 Transaction started");
+            log.debug("Transaction started");
 
         } catch (SQLException e) {
-            log.error("❌ Error starting transaction", e);
+            log.error("Error starting transaction", e);
             throw new RuntimeException("Error starting transaction: " + e.getMessage(), e);
         }
     }
@@ -127,10 +127,10 @@ public class PostgresqlDriver {
 
         try {
             conn.commit();
-            log.debug("✅ Transaction committed");
+            log.debug("Transaction committed");
 
         } catch (SQLException e) {
-            log.error("❌ Error committing transaction", e);
+            log.error("Error committing transaction", e);
             throw new RuntimeException("Error committing transaction: " + e.getMessage(), e);
 
         } finally {
@@ -142,16 +142,16 @@ public class PostgresqlDriver {
         Connection conn = transactionConnection.get();
 
         if (conn == null) {
-            log.warn("⚠️ No active transaction to rollback");
+            log.warn("No active transaction to rollback");
             return;
         }
 
         try {
             conn.rollback();
-            log.warn("🔙 Transaction rolled back");
+            log.warn("Transaction rolled back");
 
         } catch (SQLException e) {
-            log.error("❌ Error rolling back transaction", e);
+            log.error("Error rolling back transaction", e);
 
         } finally {
             closeTransactionConnection();
@@ -168,7 +168,7 @@ public class PostgresqlDriver {
                     conn.close();
                 }
             } catch (SQLException e) {
-                log.error("❌ Error closing transaction connection", e);
+                log.error("Error closing transaction connection", e);
             } finally {
                 transactionConnection.remove();
             }
