@@ -9,6 +9,7 @@ import com.example.demo.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -20,7 +21,7 @@ public class StudentManagementService {
     private final StudentRepository studentRepository;
     private final ModuleRepository moduleRepository;
     private final EnrollmentRepository enrollmentRepository;
-    private final PostgresqlDriver postgresqlDriver;
+
 
     public Module createModule(Module module) {
         if (module == null || module.getCode() == null || module.getCode().isBlank()) {
@@ -29,7 +30,7 @@ public class StudentManagementService {
 
         Module existing = moduleRepository.findByCode(module.getCode());
         if (existing != null) {
-            log.info("Module already exists with code: {}", module.getCode());
+            log.info("Module already exists: {}", module.getCode());
             return existing;
         }
 
@@ -38,57 +39,49 @@ public class StudentManagementService {
         return created;
     }
 
-    public Student createStudent(Student student) {
-        if (student == null || student.getNif() == null || student.getNif().isBlank()) {
-            throw new IllegalArgumentException("Student NIF cannot be null or empty");
-        }
+    public Student createStudent(Student s) {
 
-        if (student.getName() == null || student.getName().isBlank()) {
-            throw new IllegalArgumentException("Student name cannot be null or empty");
-        }
+        if (s == null)
+            throw new IllegalArgumentException("Student cannot be null");
 
-        if (student.getEmail() == null || student.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Student email cannot be null or empty");
-        }
+        if (s.getNif() == null || s.getNif().isBlank())
+            throw new IllegalArgumentException("NIF cannot be empty");
 
-        Student existing = studentRepository.findByNif(student.getNif());
+        if (s.getName() == null || s.getName().isBlank())
+            throw new IllegalArgumentException("Name cannot be empty");
+
+        if (s.getEmail() == null || s.getEmail().isBlank())
+            throw new IllegalArgumentException("Email cannot be empty");
+
+        Student existing = studentRepository.findByNif(s.getNif());
         if (existing != null) {
-            log.info("Student already exists with NIF: {}", student.getNif());
+            log.info("Student already exists: {}", s.getNif());
             return existing;
         }
 
-        Student created = studentRepository.insert(student);
+        Student created = studentRepository.insert(s);
         log.info("Student created: {}", created.getName());
         return created;
     }
 
+    @Transactional
     public Enrollment enrollStudentInModule(Integer studentId, Integer moduleId) {
-        try {
-            postgresqlDriver.beginTransaction();
 
-            Student student = studentRepository.findById(studentId);
-            if (student == null) {
-                throw new IllegalArgumentException("Student not found: " + studentId);
-            }
-
-            Module module = moduleRepository.findById(moduleId);
-            if (module == null) {
-                throw new IllegalArgumentException("Module not found: " + moduleId);
-            }
-
-            Enrollment created = enrollmentRepository.create(
-                    new Enrollment(null, student.getId(), module.getId(), LocalDate.now())
-            );
-
-            postgresqlDriver.commit();
-
-            log.info("Student {} enrolled in module {}", student.getName(), module.getName());
-            return created;
-
-        } catch (Exception e) {
-            postgresqlDriver.rollback();
-            log.error("Error enrolling student in module", e);
-            throw new RuntimeException("Error enrolling student in module", e);
+        Student student = studentRepository.findById(studentId);
+        if (student == null) {
+            throw new IllegalArgumentException("Student not found: " + studentId);
         }
+
+        Module module = moduleRepository.findById(moduleId);
+        if (module == null) {
+            throw new IllegalArgumentException("Module not found: " + moduleId);
+        }
+
+        Enrollment created = enrollmentRepository.create(
+                new Enrollment(null, student.getId(), module.getId(), LocalDate.now())
+        );
+
+        log.info("Student {} enrolled in module {}", student.getName(), module.getName());
+        return created;
     }
 }

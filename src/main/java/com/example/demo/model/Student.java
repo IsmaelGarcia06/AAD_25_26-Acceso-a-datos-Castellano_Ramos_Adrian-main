@@ -12,12 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class Student {
-    private Integer id;        // era 'dni'
-    private String nif;        // campo del PDF
+    private Integer id;
+    private String nif;
     private String name;
     private String email;
-    private String curse;      // campo del PDF (curso: DAW, DAM, etc.)
-    private List<Module> modules;  // relación con módulos
+    private String curse;
+    private List<Module> modules;
 
-    // Constructor vacío, constructor completo, getters y setters
+
 }
