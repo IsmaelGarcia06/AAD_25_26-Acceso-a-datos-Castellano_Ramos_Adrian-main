@@ -63,5 +63,17 @@ proporcionadas.
 
 Si la conexión es exitosa, se debería ver un mensaje de bienvenida de PostgreSQL y un prompt para ejecutar comandos SQL.
 
+## Rama: feature/act_3_0
 
+Esta rama introduce la migración del acceso a datos mediante JDBC hacia el uso de JPA con soporte para PostgreSQL.
+Los cambios principales incluyen:
+
+- Eliminación de la dependencia `spring-boot-starter-jdbc`.
+- Inclusión de las dependencias:
+    - `spring-boot-starter-data-jpa`
+    - `postgresql`
+- Preparación del proyecto para el uso de entidades JPA, repositorios y operaciones ORM.
+
+El objetivo de esta rama es modernizar la capa de acceso a datos y preparar el entorno para trabajar con JPA en unidades
+posteriores.
 
