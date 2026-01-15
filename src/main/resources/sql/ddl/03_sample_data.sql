@@ -1,2 +1,0 @@
--- Datos de prueba para testing
--- Este archivo se ejecuta automáticamente después de 01_schema.sql y 02_procedures.sql

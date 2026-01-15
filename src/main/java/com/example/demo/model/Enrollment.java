@@ -1,19 +1,30 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Data
+@Entity
+@Table(name = "matricula")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Enrollment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer studentId;
-    private Integer moduleId;
-    private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "id_alumno")
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "id_modulo")
+    private Module module;
+
+    private LocalDate enrollmentDate;
+    private Double finalGrade; // Atributo adicional solicitado [cite: 64]
 }

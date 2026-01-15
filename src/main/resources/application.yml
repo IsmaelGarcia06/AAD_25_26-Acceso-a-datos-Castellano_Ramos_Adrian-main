@@ -1,20 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/aad_db
+    url: jdbc:postgresql://localhost:5432/aad
     username: postgres
     password: 1234
-    driver-class-name: org.postgresql.Driver
-
+    hikari:
+      maximum-pool-size: 5
   jpa:
     hibernate:
-      ddl-auto: none
+      [ cite_start ]ddl-auto: create-drop # Crea las tablas al iniciar y las borra al cerrar [cite: 32]
     show-sql: true
     properties:
-      hibernate.format_sql: true
-
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:sql/ddl/01_schema.sql
-      data-locations: classpath:sql/ddl/02_procedures.sql, classpath:sql/ddl/03_sample_data.sql
-      continue-on-error: false
+      hibernate:
+        format_sql: true
