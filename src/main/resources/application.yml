@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/aad
-    username: postgres
-    password: 1234
+    url: jdbc:postgresql://localhost:5432/prueba
+    username: admin
+    password: admin
     hikari:
       maximum-pool-size: 5
   jpa:
     hibernate:
-      [ cite_start ]ddl-auto: create-drop # Crea las tablas al iniciar y las borra al cerrar [cite: 32]
+      ddl-auto: create-drop # Crea las tablas al iniciar y las borra al cerrar [cite: 32]
     show-sql: true
     properties:
       hibernate:
